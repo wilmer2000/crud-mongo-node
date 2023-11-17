@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  api:
+    image: node:20-alpine
+    build:
+      dockerfile: Dockerfile
+      context: ./api
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017/crud-db
+    ports:
+      - '3000:3000'
+    depends_on:
+      - mongodb
+    volumes:
+      - ./api:/usr/src/app/api
+      - /usr/src/app/api/node_modules
+    networks:
+      - crud-network
+
+  mongodb:
+    image: mongo:6-jammy
+    ports:
+      - '27017:27017'
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - crud-network
+
+volumes:
+  mongodb_data:
+
+networks:
+  crud-network:
+    driver: bridge
